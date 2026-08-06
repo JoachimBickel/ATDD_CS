@@ -28,4 +28,10 @@ public class ViewerService(IModelSource source, IView view)
         _camera = CameraControl.Zoom(_camera, factor);
         view.ShowCamera(_camera);
     }
+
+    public void Orbit(double yaw)
+    {
+        _camera = CameraControl.Orbit(_camera, yaw);
+        view.ShowCamera(_camera);
+    }
 }

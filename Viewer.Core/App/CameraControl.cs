@@ -28,4 +28,20 @@ public static class CameraControl
     // in, > 1 zooms out). Target and up are unchanged.
     public static CameraState Zoom(CameraState camera, double factor) =>
         camera with { Eye = camera.Target + (camera.Eye - camera.Target) * factor };
+
+    // Rotates the eye around the target about the world-up (Y) axis by yaw
+    // radians (a turntable orbit). Target and up are unchanged.
+    public static CameraState Orbit(CameraState camera, double yaw)
+    {
+        var offset = camera.Eye - camera.Target;
+        var cosYaw = Math.Cos(yaw);
+        var sinYaw = Math.Sin(yaw);
+
+        var rotated = new Vec3(
+            offset.X * cosYaw + offset.Z * sinYaw,
+            offset.Y,
+            -offset.X * sinYaw + offset.Z * cosYaw);
+
+        return camera with { Eye = camera.Target + rotated };
+    }
 }
