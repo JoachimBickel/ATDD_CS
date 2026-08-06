@@ -14,5 +14,6 @@ public class ViewerService(IModelSource source, IView view)
         var content = source.Read(path);
         var model = _importer.Parse(content);
         view.ShowModel(model);
+        view.ShowModelInfo(new ModelInfo(model.Vertices.Count, model.Triangles.Count));
     }
 }
