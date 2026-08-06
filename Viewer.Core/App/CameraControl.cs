@@ -14,16 +14,12 @@ public static class CameraControl
     {
         var bounds = MeshBounds.Of(mesh);
         var center = bounds.Center;
-
-        var dx = bounds.Max.X - bounds.Min.X;
-        var dy = bounds.Max.Y - bounds.Min.Y;
-        var dz = bounds.Max.Z - bounds.Min.Z;
-        var diagonal = Math.Sqrt(dx * dx + dy * dy + dz * dz);
+        var distance = bounds.Diagonal;
 
         return new CameraState
         {
             Target = center,
-            Eye = new Vec3(center.X, center.Y, center.Z + diagonal),
+            Eye = new Vec3(center.X, center.Y, center.Z + distance),
             Up = new Vec3(0.0, 1.0, 0.0),
         };
     }
