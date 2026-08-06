@@ -122,6 +122,25 @@ public class OpenModelTests
     }
 
     [Fact]
+    public void Orbiting_rotates_the_eye_around_the_target()
+    {
+        var view = new FakeView();
+        var service = new ViewerService(new FakeModelSource(TriangleObj), view);
+        service.OpenModel("triangle.obj");
+
+        const double quarterTurn = Math.PI / 2;  // 90 degrees, in radians
+        service.Orbit(quarterTurn);
+
+        // Framed eye (0.5, 0.5, sqrt(2)) rotated 90 deg about the vertical axis
+        // through the target (0.5, 0.5, 0) lands at (0.5 + sqrt(2), 0.5, 0).
+        Assert.Equal(0.5 + Math.Sqrt(2), view.ShownCamera.Eye.X, 1e-9);
+        Assert.Equal(0.5, view.ShownCamera.Eye.Y);
+        Assert.Equal(0.0, view.ShownCamera.Eye.Z, 1e-9);
+
+        Assert.Equal(new Vec3(0.5, 0.5, 0), view.ShownCamera.Target);
+    }
+
+    [Fact]
     public void Parses_real_world_obj_with_comments_blanks_and_slash_faces()
     {
         var view = OpenModelWith("""
