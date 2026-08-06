@@ -25,16 +25,18 @@ public class ObjImporter
                     double.Parse(y, CultureInfo.InvariantCulture),
                     double.Parse(z, CultureInfo.InvariantCulture)));
             }
-            else if (tokens is ["f", var a, var b, var c])
+            else if (tokens is ["f", .. var corners] && corners.Length >= 3)
             {
-                // OBJ indices are 1-based; the mesh stores them 0-based.
                 mesh.AddTriangle(new Triangle(
-                    int.Parse(a, CultureInfo.InvariantCulture) - 1,
-                    int.Parse(b, CultureInfo.InvariantCulture) - 1,
-                    int.Parse(c, CultureInfo.InvariantCulture) - 1));
+                    VertexIndex(corners[0]), VertexIndex(corners[1]), VertexIndex(corners[2])));
             }
         }
 
         return mesh;
     }
+
+    // A face corner is "v", "v/vt", "v/vt/vn" or "v//vn"; keep only the leading
+    // vertex index. OBJ indices are 1-based; the mesh stores them 0-based.
+    private static int VertexIndex(string faceCorner) =>
+        int.Parse(faceCorner.Split('/')[0], CultureInfo.InvariantCulture) - 1;
 }
