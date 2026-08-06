@@ -95,6 +95,16 @@ public class OpenModelTests
     }
 
     [Fact]
+    public void Framing_places_the_camera_back_from_the_target()
+    {
+        Assert.Equal(new Vec3(0, 1, 0), _view.ShownCamera.Up);
+
+        Assert.Equal(0.5, _view.ShownCamera.Eye.X);
+        Assert.Equal(0.5, _view.ShownCamera.Eye.Y);
+        Assert.Equal(Math.Sqrt(2), _view.ShownCamera.Eye.Z, 1e-9);
+    }
+
+    [Fact]
     public void Parses_real_world_obj_with_comments_blanks_and_slash_faces()
     {
         var view = OpenModelWith("""
