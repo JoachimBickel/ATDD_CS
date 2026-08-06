@@ -16,5 +16,6 @@ public class ViewerService(IModelSource source, IView view)
 
         view.ShowModel(model);
         view.ShowModelInfo(Presentation.DescribeModel(model));
+        view.ShowCamera(CameraControl.FrameModel(model));
     }
 }
