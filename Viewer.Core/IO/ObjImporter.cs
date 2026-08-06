@@ -16,24 +16,24 @@ public class ObjImporter
 
         foreach (var line in text.Split('\n'))
         {
-            var tokens = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-            if (tokens is ["v", var x, var y, var z])
+            switch (line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
             {
-                mesh.AddVertex(new Vec3(
-                    double.Parse(x, CultureInfo.InvariantCulture),
-                    double.Parse(y, CultureInfo.InvariantCulture),
-                    double.Parse(z, CultureInfo.InvariantCulture)));
-            }
-            else if (tokens is ["f", .. var corners] && corners.Length >= 3)
-            {
-                mesh.AddTriangle(new Triangle(
-                    VertexIndex(corners[0]), VertexIndex(corners[1]), VertexIndex(corners[2])));
+                case ["v", var x, var y, var z]:
+                    mesh.AddVertex(new Vec3(ParseDouble(x), ParseDouble(y), ParseDouble(z)));
+                    break;
+                case ["f", .. var corners] when corners.Length >= 3:
+                    mesh.AddTriangle(new Triangle(
+                        VertexIndex(corners[0]), VertexIndex(corners[1]), VertexIndex(corners[2])));
+                    break;
             }
         }
 
         return mesh;
     }
+
+    // Model files use "." decimals regardless of OS locale (see AGENTS.md).
+    private static double ParseDouble(string token) =>
+        double.Parse(token, CultureInfo.InvariantCulture);
 
     // A face corner is "v", "v/vt", "v/vt/vn" or "v//vn"; keep only the leading
     // vertex index. OBJ indices are 1-based; the mesh stores them 0-based.

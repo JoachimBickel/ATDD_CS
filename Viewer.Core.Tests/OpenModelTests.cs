@@ -42,15 +42,17 @@ public class OpenModelTests
         f 1 2 3
         """;
 
-    private readonly FakeView _view = new();
+    // The one-triangle model reused across the loading cases.
+    private readonly FakeView _view = OpenModelWith(TriangleObj);
 
-    // Shared arrange + act: xUnit constructs the test class fresh per case, so
-    // the constructor is the fixture — a service that has just opened a
-    // one-triangle model.
-    public OpenModelTests()
+    // Arrange + act: open a model from the given OBJ text, returning what the
+    // view was shown. The single home for wiring the fakes to the service.
+    private static FakeView OpenModelWith(string objText)
     {
-        var service = new ViewerService(new FakeModelSource(TriangleObj), _view);
-        service.OpenModel("triangle.obj");
+        var view = new FakeView();
+        var service = new ViewerService(new FakeModelSource(objText), view);
+        service.OpenModel("model.obj");
+        return view;
     }
 
     [Fact]
@@ -79,7 +81,7 @@ public class OpenModelTests
     [Fact]
     public void Parses_real_world_obj_with_comments_blanks_and_slash_faces()
     {
-        var source = new FakeModelSource("""
+        var view = OpenModelWith("""
             # exported by something
             o triangle
 
@@ -90,10 +92,6 @@ public class OpenModelTests
             # the face
             f 1/1/1 2/2/2 3/3/3
             """);
-        var view = new FakeView();
-        var service = new ViewerService(source, view);
-
-        service.OpenModel("model.obj");
 
         Assert.Equal(3, view.ShownMesh.Vertices.Count);
         Assert.Single(view.ShownMesh.Triangles);
