@@ -75,4 +75,28 @@ public class OpenModelTests
         Assert.Equal(new Vec3(0, 0, 0), _view.ShownInfo.Bounds.Min);
         Assert.Equal(new Vec3(1, 1, 0), _view.ShownInfo.Bounds.Max);
     }
+
+    [Fact]
+    public void Parses_real_world_obj_with_comments_blanks_and_slash_faces()
+    {
+        var source = new FakeModelSource("""
+            # exported by something
+            o triangle
+
+            v 0 0 0
+            v 1 0 0
+            v 0 1 0
+
+            # the face
+            f 1/1/1 2/2/2 3/3/3
+            """);
+        var view = new FakeView();
+        var service = new ViewerService(source, view);
+
+        service.OpenModel("model.obj");
+
+        Assert.Equal(3, view.ShownMesh.Vertices.Count);
+        Assert.Single(view.ShownMesh.Triangles);
+        Assert.Equal(new Triangle(0, 1, 2), view.ShownMesh.Triangles[0]);
+    }
 }
