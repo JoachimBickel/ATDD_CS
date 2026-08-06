@@ -51,11 +51,19 @@ public class OpenModelTests
         f 1 2 3
         """;
 
-    // The one-triangle model reused across the loading cases.
-    private readonly FakeView _view = OpenModelWith(TriangleObj);
+    // The one-triangle model reused across the loading and interaction cases.
+    // Holds the live service so cases can drive further commands (zoom/orbit).
+    private readonly FakeView _view = new();
+    private readonly ViewerService _service;
+
+    public OpenModelTests()
+    {
+        _service = new ViewerService(new FakeModelSource(TriangleObj), _view);
+        _service.OpenModel("triangle.obj");
+    }
 
     // Arrange + act: open a model from the given OBJ text, returning what the
-    // view was shown. The single home for wiring the fakes to the service.
+    // view was shown. For one-off content tests that only inspect the view.
     private static FakeView OpenModelWith(string objText)
     {
         var view = new FakeView();
@@ -107,37 +115,29 @@ public class OpenModelTests
     [Fact]
     public void Zooming_in_moves_the_eye_toward_the_target()
     {
-        var view = new FakeView();
-        var service = new ViewerService(new FakeModelSource(TriangleObj), view);
-        service.OpenModel("triangle.obj");
-
-        service.Zoom(0.5);
+        _service.Zoom(0.5);
 
         // Framing put the eye at (0.5, 0.5, sqrt(2)) aimed at (0.5, 0.5, 0);
         // zooming by 0.5 halves the eye->target distance, target unchanged.
-        Assert.Equal(new Vec3(0.5, 0.5, 0), view.ShownCamera.Target);
-        Assert.Equal(0.5, view.ShownCamera.Eye.X);
-        Assert.Equal(0.5, view.ShownCamera.Eye.Y);
-        Assert.Equal(Math.Sqrt(2) / 2, view.ShownCamera.Eye.Z, 1e-9);
+        Assert.Equal(new Vec3(0.5, 0.5, 0), _view.ShownCamera.Target);
+        Assert.Equal(0.5, _view.ShownCamera.Eye.X);
+        Assert.Equal(0.5, _view.ShownCamera.Eye.Y);
+        Assert.Equal(Math.Sqrt(2) / 2, _view.ShownCamera.Eye.Z, 1e-9);
     }
 
     [Fact]
     public void Orbiting_rotates_the_eye_around_the_target()
     {
-        var view = new FakeView();
-        var service = new ViewerService(new FakeModelSource(TriangleObj), view);
-        service.OpenModel("triangle.obj");
-
         const double quarterTurn = Math.PI / 2;  // 90 degrees, in radians
-        service.Orbit(quarterTurn);
+        _service.Orbit(quarterTurn);
 
         // Framed eye (0.5, 0.5, sqrt(2)) rotated 90 deg about the vertical axis
         // through the target (0.5, 0.5, 0) lands at (0.5 + sqrt(2), 0.5, 0).
-        Assert.Equal(0.5 + Math.Sqrt(2), view.ShownCamera.Eye.X, 1e-9);
-        Assert.Equal(0.5, view.ShownCamera.Eye.Y);
-        Assert.Equal(0.0, view.ShownCamera.Eye.Z, 1e-9);
+        Assert.Equal(0.5 + Math.Sqrt(2), _view.ShownCamera.Eye.X, 1e-9);
+        Assert.Equal(0.5, _view.ShownCamera.Eye.Y);
+        Assert.Equal(0.0, _view.ShownCamera.Eye.Z, 1e-9);
 
-        Assert.Equal(new Vec3(0.5, 0.5, 0), view.ShownCamera.Target);
+        Assert.Equal(new Vec3(0.5, 0.5, 0), _view.ShownCamera.Target);
     }
 
     [Fact]
