@@ -8,4 +8,5 @@ public interface IView
 {
     void ShowModel(Mesh mesh);
     void ShowModelInfo(ModelInfo info);
+    void ShowCamera(CameraState camera);
 }
