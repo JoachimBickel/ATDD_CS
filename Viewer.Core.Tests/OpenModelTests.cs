@@ -20,6 +20,9 @@ internal sealed class FakeView : IView
     public bool InfoShown { get; private set; }
     public ModelInfo ShownInfo { get; private set; }
 
+    public bool CameraShown { get; private set; }
+    public CameraState ShownCamera { get; private set; }
+
     public void ShowModel(Mesh mesh)
     {
         ModelShown = true;
@@ -30,6 +33,12 @@ internal sealed class FakeView : IView
     {
         InfoShown = true;
         ShownInfo = info;
+    }
+
+    public void ShowCamera(CameraState camera)
+    {
+        CameraShown = true;
+        ShownCamera = camera;
     }
 }
 
@@ -76,6 +85,13 @@ public class OpenModelTests
     {
         Assert.Equal(new Vec3(0, 0, 0), _view.ShownInfo.Bounds.Min);
         Assert.Equal(new Vec3(1, 1, 0), _view.ShownInfo.Bounds.Max);
+    }
+
+    [Fact]
+    public void Opening_a_model_frames_it()
+    {
+        Assert.True(_view.CameraShown);
+        Assert.Equal(new Vec3(0.5, 0.5, 0), _view.ShownCamera.Target);
     }
 
     [Fact]
