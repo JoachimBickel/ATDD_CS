@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The hexagonal core: pure C#, no UI-framework or filesystem dependencies.
+       Common properties come from Directory.Build.props. -->
+
+</Project>

@@ -1,0 +1,36 @@
+# Build outputs
+# NOTE: 'obj/' matches only DIRECTORIES named obj (MSBuild intermediates);
+# Wavefront model FILES like assets/cube.obj stay tracked.
+bin/
+obj/
+artifacts/
+*.binlog
+
+# Test results / coverage
+TestResults/
+*.trx
+*.coverage
+
+# IDE / editor
+.vs/
+.vscode/
+.vshistory/
+# Rider: .idea CAN hold team-shared settings, but everything shared in this
+# repo lives in ATDD_CS.slnx.DotSettings (tracked; read by both Rider and
+# VS + ReSharper), so .idea stays ignored wholesale.
+.idea/
+*.DotSettings.user
+*.user
+*.suo
+# ReSharper caches (if configured to live in the solution folder)
+_ReSharper*/
+
+# NuGet
+*.nupkg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code local settings
+.claude/settings.local.json

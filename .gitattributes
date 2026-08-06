@@ -1,0 +1,46 @@
+# Normalize line endings.
+#
+# All text files are stored with LF in the repository AND checked out with LF
+# (text=auto eol=lf). Working copies are then byte-for-byte identical on every
+# machine, with no per-machine git configuration and no CRLF warnings. Modern
+# Windows tooling (Visual Studio, Rider, MSBuild) handles LF sources fine.
+# Files that genuinely require a different ending are overridden below.
+* text=auto eol=lf
+
+# Windows batch scripts must use CRLF; cmd.exe mishandles LF (e.g. goto/labels).
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# --- Explicit text types (documentation / clarity; LF inherited from the rule above) ---
+*.cs          text
+*.csproj      text
+*.props       text
+*.targets     text
+*.slnx        text
+*.DotSettings text
+*.xaml        text
+*.resx        text
+*.ps1         text
+*.md          text
+*.json        text
+*.yml         text
+*.yaml        text
+*.txt         text
+
+# --- Binary files: never apply line-ending conversion ---
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.bmp   binary
+*.ico   binary
+*.pdf   binary
+*.zip   binary
+*.7z    binary
+
+# 3D assets that are binary formats (the viewer's models)
+*.glb   binary
+*.fbx   binary
+*.3ds   binary
+*.blend binary
+# Note: *.obj, *.gltf, *.ply, ASCII *.stl are text; left to the default rule above (LF).

@@ -1,0 +1,35 @@
+# EditorConfig (https://editorconfig.org) — a standard, editor-agnostic way to
+# keep basic formatting consistent. Honored natively by Rider, Visual Studio,
+# VS Code, and most other editors. Line-ending policy matches .gitattributes.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# Windows batch scripts require CRLF (mirrors .gitattributes)
+[*.{bat,cmd}]
+end_of_line = crlf
+
+# In Markdown a trailing double-space is a hard line break — don't strip it
+[*.md]
+trim_trailing_whitespace = false
+
+# XML-based project/config files conventionally use 2-space indentation
+[*.{csproj,props,targets,slnx,resx,config,DotSettings}]
+indent_size = 2
+
+[*.{yml,yaml,json}]
+indent_size = 2
+
+[*.cs]
+# Modern C# defaults: file-scoped namespaces, usings outside the namespace
+# (System first), always braces.
+csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_using_directive_placement = outside_namespace:suggestion
+dotnet_sort_system_directives_first = true
+csharp_prefer_braces = true:suggestion
