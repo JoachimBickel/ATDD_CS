@@ -1,3 +1,4 @@
+using Viewer.Core.Analysis;
 using Viewer.Core.IO;
 using Viewer.Core.Ports;
 
@@ -14,6 +15,6 @@ public class ViewerService(IModelSource source, IView view)
         var content = source.Read(path);
         var model = _importer.Parse(content);
         view.ShowModel(model);
-        view.ShowModelInfo(new ModelInfo(model.Vertices.Count, model.Triangles.Count));
+        view.ShowModelInfo(new ModelInfo(model.Vertices.Count, model.Triangles.Count, MeshBounds.Of(model)));
     }
 }
