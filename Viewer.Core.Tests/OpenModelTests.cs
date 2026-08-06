@@ -68,4 +68,11 @@ public class OpenModelTests
         Assert.Equal(3, _view.ShownInfo.VertexCount);
         Assert.Equal(1, _view.ShownInfo.TriangleCount);
     }
+
+    [Fact]
+    public void Opening_a_model_shows_its_bounding_box()
+    {
+        Assert.Equal(new Vec3(0, 0, 0), _view.ShownInfo.Bounds.Min);
+        Assert.Equal(new Vec3(1, 1, 0), _view.ShownInfo.Bounds.Max);
+    }
 }
