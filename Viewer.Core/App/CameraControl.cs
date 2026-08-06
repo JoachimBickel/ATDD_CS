@@ -13,10 +13,6 @@ public static class CameraControl
     public static CameraState FrameModel(Mesh mesh)
     {
         var bounds = MeshBounds.Of(mesh);
-        var target = new Vec3(
-            (bounds.Min.X + bounds.Max.X) / 2.0,
-            (bounds.Min.Y + bounds.Max.Y) / 2.0,
-            (bounds.Min.Z + bounds.Max.Z) / 2.0);
-        return new CameraState { Target = target };
+        return new CameraState { Target = bounds.Center };
     }
 }
