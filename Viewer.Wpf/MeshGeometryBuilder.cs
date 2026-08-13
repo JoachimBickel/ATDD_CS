@@ -14,9 +14,25 @@ public static class MeshGeometryBuilder
 
         foreach (var vertex in mesh.Vertices)
         {
-            geometry.Positions.Add(new Point3D(vertex.X, vertex.Y, vertex.Z));
+            geometry.Positions.Add(ToPoint(vertex));
+        }
+
+        foreach (var triangle in mesh.Triangles)
+        {
+            var a = ToPoint(mesh.Vertices[triangle.V0]);
+            var b = ToPoint(mesh.Vertices[triangle.V1]);
+            var c = ToPoint(mesh.Vertices[triangle.V2]);
+
+            var normal = Vector3D.CrossProduct(b - a, c - a);
+            normal.Normalize();
+
+            geometry.Normals.Add(normal);
+            geometry.Normals.Add(normal);
+            geometry.Normals.Add(normal);
         }
 
         return geometry;
     }
+
+    private static Point3D ToPoint(Vec3 v) => new(v.X, v.Y, v.Z);
 }
