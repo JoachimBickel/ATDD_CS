@@ -31,4 +31,14 @@ public class MeshGeometryBuilderTests
         Assert.Equal(new Point3D(1, 0, 0), geometry.Positions[1]);
         Assert.Equal(new Point3D(0, 1, 0), geometry.Positions[2]);
     }
+
+    [Fact]
+    public void Gives_every_corner_the_face_normal()
+    {
+        var geometry = MeshGeometryBuilder.ToGeometry(TriangleMesh());
+
+        // Counter-clockwise seen from +Z, so the unit normal points at +Z.
+        Assert.Equal(3, geometry.Normals.Count);
+        Assert.All(geometry.Normals, normal => Assert.Equal(new Vector3D(0, 0, 1), normal));
+    }
 }
