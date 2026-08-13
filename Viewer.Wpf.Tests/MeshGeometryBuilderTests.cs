@@ -41,4 +41,30 @@ public class MeshGeometryBuilderTests
         Assert.Equal(3, geometry.Normals.Count);
         Assert.All(geometry.Normals, normal => Assert.Equal(new Vector3D(0, 0, 1), normal));
     }
+
+    [Fact]
+    public void Duplicates_shared_vertices_so_each_face_keeps_its_normal()
+    {
+        // Two faces folded along the shared edge v0-v1: one in the XY plane
+        // (normal +Z), one in the XZ plane (normal +Y). Flat shading needs one
+        // position per face corner — shared vertices must not share normals.
+        var mesh = new Mesh();
+        mesh.AddVertex(new Vec3(0, 0, 0));
+        mesh.AddVertex(new Vec3(1, 0, 0));
+        mesh.AddVertex(new Vec3(0, 1, 0));
+        mesh.AddVertex(new Vec3(0, 0, 1));
+        mesh.AddTriangle(new Triangle(0, 1, 2));
+        mesh.AddTriangle(new Triangle(1, 0, 3));
+
+        var geometry = MeshGeometryBuilder.ToGeometry(mesh);
+
+        Assert.Equal(6, geometry.Positions.Count);
+        Assert.Equal(new Point3D(1, 0, 0), geometry.Positions[3]);
+        Assert.Equal(new Point3D(0, 0, 0), geometry.Positions[4]);
+        Assert.Equal(new Point3D(0, 0, 1), geometry.Positions[5]);
+
+        Assert.Equal(6, geometry.Normals.Count);
+        Assert.All(geometry.Normals.Take(3), normal => Assert.Equal(new Vector3D(0, 0, 1), normal));
+        Assert.All(geometry.Normals.Skip(3), normal => Assert.Equal(new Vector3D(0, 1, 0), normal));
+    }
 }
