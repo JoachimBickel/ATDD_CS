@@ -12,11 +12,8 @@ public static class MeshGeometryBuilder
     {
         var geometry = new MeshGeometry3D();
 
-        foreach (var vertex in mesh.Vertices)
-        {
-            geometry.Positions.Add(ToPoint(vertex));
-        }
-
+        // De-index into a triangle soup: every face gets its own three corner
+        // positions, so shared vertices can carry a different normal per face.
         foreach (var triangle in mesh.Triangles)
         {
             var a = ToPoint(mesh.Vertices[triangle.V0]);
@@ -25,6 +22,10 @@ public static class MeshGeometryBuilder
 
             var normal = Vector3D.CrossProduct(b - a, c - a);
             normal.Normalize();
+
+            geometry.Positions.Add(a);
+            geometry.Positions.Add(b);
+            geometry.Positions.Add(c);
 
             geometry.Normals.Add(normal);
             geometry.Normals.Add(normal);
