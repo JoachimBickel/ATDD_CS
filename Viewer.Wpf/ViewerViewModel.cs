@@ -64,6 +64,10 @@ public class ViewerViewModel : IView, INotifyPropertyChanged
 
     public void OpenModel(string path) => Service?.OpenModel(path);
 
+    public void Orbit(double yaw) => Service?.Orbit(yaw);
+
+    public void Zoom(double factor) => Service?.Zoom(factor);
+
     public void ShowModel(Mesh mesh) => Geometry = MeshGeometryBuilder.ToGeometry(mesh);
 
     public void ShowModelInfo(ModelInfo info)
