@@ -1,143 +1,49 @@
-using Viewer.Core.App;
 using Viewer.Core.Geometry;
-using Viewer.Core.Ports;
+using Viewer.Core.Tests.Support;
 using Xunit;
 
 namespace Viewer.Core.Tests;
 
-// Outbound-port fake: hands back canned file content, no filesystem involved.
-internal sealed class FakeModelSource(string content) : IModelSource
+public class OpenModelTests : OpenedTriangleModel
 {
-    public string Read(string path) => content;
-}
-
-// Outbound-port fake: captures what the core asks the UI to display.
-internal sealed class FakeView : IView
-{
-    public bool ModelShown { get; private set; }
-    public Mesh ShownMesh { get; private set; } = new();
-
-    public bool InfoShown { get; private set; }
-    public ModelInfo ShownInfo { get; private set; }
-
-    public bool CameraShown { get; private set; }
-    public CameraState ShownCamera { get; private set; }
-
-    public void ShowModel(Mesh mesh)
-    {
-        ModelShown = true;
-        ShownMesh = mesh;
-    }
-
-    public void ShowModelInfo(ModelInfo info)
-    {
-        InfoShown = true;
-        ShownInfo = info;
-    }
-
-    public void ShowCamera(CameraState camera)
-    {
-        CameraShown = true;
-        ShownCamera = camera;
-    }
-}
-
-public class OpenModelTests
-{
-    private const string TriangleObj = """
-        v 0 0 0
-        v 1 0 0
-        v 0 1 0
-        f 1 2 3
-        """;
-
-    // The one-triangle model reused across the loading and interaction cases.
-    // Holds the live service so cases can drive further commands (zoom/orbit).
-    private readonly FakeView _view = new();
-    private readonly ViewerService _service;
-
-    public OpenModelTests()
-    {
-        _service = new ViewerService(new FakeModelSource(TriangleObj), _view);
-        _service.OpenModel("triangle.obj");
-    }
-
-    // Arrange + act: open a model from the given OBJ text, returning what the
-    // view was shown. For one-off content tests that only inspect the view.
-    private static FakeView OpenModelWith(string objText)
-    {
-        var view = new FakeView();
-        var service = new ViewerService(new FakeModelSource(objText), view);
-        service.OpenModel("model.obj");
-        return view;
-    }
-
     [Fact]
     public void Opening_a_model_displays_it_in_the_view()
     {
-        Assert.True(_view.ModelShown);
-        Assert.Equal(3, _view.ShownMesh.Vertices.Count);
-        Assert.Single(_view.ShownMesh.Triangles);
+        Assert.True(View.ModelShown);
+        Assert.Equal(3, View.ShownMesh.Vertices.Count);
+        Assert.Single(View.ShownMesh.Triangles);
     }
 
     [Fact]
     public void Opening_a_model_shows_its_info()
     {
-        Assert.True(_view.InfoShown);
-        Assert.Equal(3, _view.ShownInfo.VertexCount);
-        Assert.Equal(1, _view.ShownInfo.TriangleCount);
+        Assert.True(View.InfoShown);
+        Assert.Equal(3, View.ShownInfo.VertexCount);
+        Assert.Equal(1, View.ShownInfo.TriangleCount);
     }
 
     [Fact]
     public void Opening_a_model_shows_its_bounding_box()
     {
-        Assert.Equal(new Vec3(0, 0, 0), _view.ShownInfo.Bounds.Min);
-        Assert.Equal(new Vec3(1, 1, 0), _view.ShownInfo.Bounds.Max);
+        Assert.Equal(new Vec3(0, 0, 0), View.ShownInfo.Bounds.Min);
+        Assert.Equal(new Vec3(1, 1, 0), View.ShownInfo.Bounds.Max);
     }
 
     [Fact]
     public void Opening_a_model_frames_it()
     {
-        Assert.True(_view.CameraShown);
-        Assert.Equal(new Vec3(0.5, 0.5, 0), _view.ShownCamera.Target);
+        Assert.True(View.CameraShown);
+        Assert.Equal(new Vec3(0.5, 0.5, 0), View.ShownCamera.Target);
     }
 
     [Fact]
     public void Framing_places_the_camera_back_from_the_target()
     {
-        Assert.Equal(new Vec3(0, 1, 0), _view.ShownCamera.Up);
+        Assert.Equal(new Vec3(0, 1, 0), View.ShownCamera.Up);
 
-        Assert.Equal(0.5, _view.ShownCamera.Eye.X);
-        Assert.Equal(0.5, _view.ShownCamera.Eye.Y);
-        Assert.Equal(Math.Sqrt(2), _view.ShownCamera.Eye.Z, 1e-9);
-    }
-
-    [Fact]
-    public void Zooming_in_moves_the_eye_toward_the_target()
-    {
-        _service.Zoom(0.5);
-
-        // Framing put the eye at (0.5, 0.5, sqrt(2)) aimed at (0.5, 0.5, 0);
-        // zooming by 0.5 halves the eye->target distance, target unchanged.
-        Assert.Equal(new Vec3(0.5, 0.5, 0), _view.ShownCamera.Target);
-        Assert.Equal(0.5, _view.ShownCamera.Eye.X);
-        Assert.Equal(0.5, _view.ShownCamera.Eye.Y);
-        Assert.Equal(Math.Sqrt(2) / 2, _view.ShownCamera.Eye.Z, 1e-9);
-    }
-
-    [Fact]
-    public void Orbiting_rotates_the_eye_around_the_target()
-    {
-        const double quarterTurn = Math.PI / 2;  // 90 degrees, in radians
-        _service.Orbit(quarterTurn);
-
-        // Framed eye (0.5, 0.5, sqrt(2)) rotated 90 deg about the vertical axis
-        // through the target (0.5, 0.5, 0) lands at (0.5 + sqrt(2), 0.5, 0).
-        Assert.Equal(0.5 + Math.Sqrt(2), _view.ShownCamera.Eye.X, 1e-9);
-        Assert.Equal(0.5, _view.ShownCamera.Eye.Y);
-        Assert.Equal(0.0, _view.ShownCamera.Eye.Z, 1e-9);
-
-        Assert.Equal(new Vec3(0.5, 0.5, 0), _view.ShownCamera.Target);
+        Assert.Equal(0.5, View.ShownCamera.Eye.X);
+        Assert.Equal(0.5, View.ShownCamera.Eye.Y);
+        Assert.Equal(Math.Sqrt(2), View.ShownCamera.Eye.Z, 1e-9);
     }
 
     [Fact]
