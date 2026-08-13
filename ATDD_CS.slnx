@@ -10,4 +10,6 @@
   </Folder>
   <Project Path="Viewer.Core/Viewer.Core.csproj" />
   <Project Path="Viewer.Core.Tests/Viewer.Core.Tests.csproj" />
+  <Project Path="Viewer.Wpf/Viewer.Wpf.csproj" />
+  <Project Path="Viewer.Wpf.Tests/Viewer.Wpf.Tests.csproj" />
 </Solution>

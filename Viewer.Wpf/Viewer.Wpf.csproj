@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The WPF UI adapter: a humble shell around Viewer.Core. Built
+       pragmatically (not via TDD) per AGENTS.md; all logic lives in the core. -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Viewer.Core\Viewer.Core.csproj" />
+  </ItemGroup>
+
+</Project>

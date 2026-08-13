@@ -13,8 +13,8 @@ A small **3D viewer application** written in **C#**.
 - **Solution:** `ATDD_CS.slnx` (.NET SDK-style projects, central package management)
 - **Runtime:** .NET 10 (`net10.0`)
 - **Test framework:** xUnit (v3)
-- **GUI framework:** intentionally not chosen yet — the UI adapter arrives in a
-  late stage, and the core never depends on it.
+- **GUI framework:** WPF — the `Viewer.Wpf` adapter (MVVM with a humble view
+  model); the core never depends on it.
 - **Target:** Windows, for both development and execution.
 
 Keep the core free of UI-framework, OS-specific, and filesystem dependencies;
@@ -26,13 +26,13 @@ The workshop subject is **"augmented TDD"** — practising correct TDD (red-gree
 
 - **Already work** — a baseline 3D viewer that loads and displays a model out of the box.
 - **Leave room** — a backlog of functionality features to add: a couple demonstrated live via TDD-with-AI, the rest implemented by participants.
-- **Showcase functionality, not UI.** The UI is **pre-built and is *not* developed via TDD** (UI is a poor TDD showcase). All TDD effort targets the testable core.
+- **Showcase functionality, not UI.** The UI adapter (XAML, view model, code-behind) is **pre-built and is *not* developed via TDD** (it is a poor TDD showcase) — with one exception: logic that merely *depends on* WPF types (e.g. mesh → `MeshGeometry3D`) is still logic. It is extracted into pure conversion functions and developed test-first in `Viewer.Wpf.Tests`. All other TDD effort targets the testable core.
 
 Planned feature tiers (subject to change):
 
 - **Baseline (pre-built):** OBJ import → display with orbit/zoom camera → info panel (vertex/face counts, bounding box).
 - **Demo (live TDD):** e.g. surface area; STL import (a second importer behind the same port).
-- **Participant backlog:** mesh volume, normals, watertight check, centroid, duplicate-vertex detection, transformations (center/normalize/scale), ray–triangle picking, more formats (PLY/glTF).
+- **Participant backlog:** mesh volume, normals, watertight check, centroid, duplicate-vertex detection, transformations (center/normalize/scale), ray–triangle picking, more formats (PLY/glTF), moving flat-shaded render prep out of the adapter into the core (a `RenderData` port — the geometry-builder tests migrate into core tests as the logic moves).
 
 A **C++ twin** of this repository exists (`ATDD_CPP`, same features, same TDD
 history); participants work in one language only, so the two never need to be
@@ -50,8 +50,11 @@ Viewer.Core/         ← pure C#, no UI framework; fully covered by xUnit
   Ports/       outbound — IView + IModelSource interfaces the adapters implement
   IO/          importers (OBJ, …) parsing in-memory text
 Viewer.Core.Tests/   ← xUnit; drives inbound ports against fake outbound ports
-<UI adapter>/        ← added in a late stage; implements the View port;
-                       built pragmatically, NOT via TDD
+Viewer.Wpf/          ← WPF adapter (MVVM): ViewerViewModel implements the View
+                       port, XAML views bind to it, FileModelSource implements
+                       IModelSource. Humble, except extracted conversion logic.
+Viewer.Wpf.Tests/    ← xUnit; unit-tests ONLY the adapter's extracted conversion
+                       functions (e.g. MeshGeometryBuilder), headless
 ```
 
 **Two ports for the UI:**
@@ -59,7 +62,7 @@ Viewer.Core.Tests/   ← xUnit; drives inbound ports against fake outbound ports
 - **Inbound (commands)** — the UI adapter calls these: `OpenModel(path)`, `Orbit(…)`, `Zoom(…)`, `Pick(x, y)`, `SelectMetric(…)`.
 - **Outbound (view)** — the core pushes view-state out through an interface the UI implements: `ShowModel(…)`, `ShowModelInfo(…)`, `ShowCamera(…)`, `ShowError(…)`. Tests substitute a fake view and assert on it.
 
-The UI is **humble/passive**: translate input events into inbound commands, render whatever view-state the core supplies, and hold almost no logic of its own.
+The adapter follows **MVVM, kept humble**: `ViewerViewModel` implements the View port. The core pushes state; the view model converts it once into bindable WPF values (`MeshGeometry3D`, `PerspectiveCamera`, formatted strings) and raises change notifications; the XAML views just bind. Inbound, the views call thin view-model methods (`OpenModel`/`Orbit`/`Zoom`) that forward to the core service. Code-behind holds only what must stay there: showing dialogs and translating raw input events into command parameters. Plain `INotifyPropertyChanged` — no MVVM framework dependency. The view model itself holds no logic: anything algorithmic (e.g. building the flat-shaded `MeshGeometry3D`) is extracted into a pure conversion function — the only adapter code that is unit-tested.
 
 **Rules that keep the core testable:**
 
@@ -67,6 +70,7 @@ The UI is **humble/passive**: translate input events into inbound commands, rend
 - **Decisions/transformations live in the core; tech mechanics live in the adapter.** Don't route trivial pass-throughs through ceremony, but camera math, picking, parsing, and presentation logic belong in the core (and are prime TDD targets). Only draw calls and raw event capture stay in the UI.
 - **Parsing is core logic** that works on in-memory text (testable without touching the filesystem); reading bytes from disk is an adapter concern (`IModelSource`).
 - **Culture-invariant numbers.** Model files use `.` as the decimal separator regardless of OS locale; all numeric parsing/formatting in the core uses `CultureInfo.InvariantCulture`.
+- **Test logic, not plumbing.** The view model and code-behind are untested pass-through. When adapter code grows logic, extract it into a pure conversion function and unit-test that (`Viewer.Wpf.Tests`, headless) — or move it into the core when it is not WPF-specific. Adapter tests assert conversions only; they never re-drive scenarios the core tests already own.
 
 ## Development methodology: TDD
 
