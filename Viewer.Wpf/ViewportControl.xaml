@@ -1,0 +1,6 @@
+<UserControl x:Class="Viewer.Wpf.ViewportControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#FF292B33">
+    <!-- Stage 1: a dark surface. The 3D scene arrives in stage 2. -->
+</UserControl>
