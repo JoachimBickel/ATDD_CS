@@ -67,6 +67,8 @@ Use **Test-Driven Development throughout**, following strict **red-green-refacto
 
 Prefer **integrated, high-level tests** that exercise behavior through public interfaces over fine-grained unit tests. High-level tests stay stable as the implementation changes, so they survive refactoring instead of breaking on it. Write a unit test only where it gives a clear benefit and won't turn fragile over time — e.g. isolating tricky algorithmic or edge-case logic that is hard to drive from the outside.
 
+**Test organization:** one test class per file, named after the behavior area it covers (e.g. `OpenModelTests` for loading, `CameraInteractionTests` for the camera commands). Shared fakes and fixtures live in `Viewer.Core.Tests/Support/`. New tests go in the class whose behavior area they belong to — or a new class when they start a new area.
+
 ### Working agreements for the agent
 
 - **Do not run tests or the application yourself.** When a test or build is expected to be red or green, **ask the user** to run it and report whether it is red or green (or what the failure is).
