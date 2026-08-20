@@ -1,0 +1,23 @@
+<UserControl x:Class="Viewer.Wpf.ViewportControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#FF292B33">
+    <!-- The 3D scene: everything binds to the view model. Ambient 0.25 plus a
+         directional light following the camera approximates headlight shading;
+         flat normals come from the geometry builder. -->
+    <Viewport3D Camera="{Binding Camera}">
+        <ModelVisual3D>
+            <ModelVisual3D.Content>
+                <Model3DGroup>
+                    <AmbientLight Color="#FF404040" />
+                    <DirectionalLight Color="#FFBFBFBF" Direction="{Binding HeadlightDirection}" />
+                    <GeometryModel3D Geometry="{Binding Geometry}">
+                        <GeometryModel3D.Material>
+                            <DiffuseMaterial Brush="#FF8CA6CC" />
+                        </GeometryModel3D.Material>
+                    </GeometryModel3D>
+                </Model3DGroup>
+            </ModelVisual3D.Content>
+        </ModelVisual3D>
+    </Viewport3D>
+</UserControl>

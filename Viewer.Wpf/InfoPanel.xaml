@@ -1,0 +1,22 @@
+<UserControl x:Class="Viewer.Wpf.InfoPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Vertices:" Margin="0,0,8,4" />
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding VertexCount}" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Triangles:" Margin="0,0,8,4" />
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding TriangleCount}" />
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Size:" Margin="0,0,8,4" />
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SizeText}" />
+    </Grid>
+</UserControl>
