@@ -79,4 +79,12 @@ public class OpenModelTests : OpenedTriangleModel
 
         Assert.Equal("cube", view.ShownInfo.Name);
     }
+
+    [Fact]
+    public void A_model_without_an_object_name_is_named_after_its_file()
+    {
+        var view = OpenModelWith(TriangleObj, "models/teapot.obj");
+
+        Assert.Equal("teapot", view.ShownInfo.Name);
+    }
 }
