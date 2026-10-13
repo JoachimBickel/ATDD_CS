@@ -82,4 +82,18 @@ public class CameraInteractionTests : OpenedTriangleModel
         // Up stays at right angles to the viewing direction.
         Assert.Equal(0.0, Vec3.Dot(View.ShownCamera.Up, offset), 1e-9);
     }
+
+    [Fact]
+    public void Turning_while_upside_down_still_follows_the_mouse()
+    {
+        Service.Orbit(0.0, Math.PI);
+        Service.Orbit(Math.PI / 2, 0.0);
+
+        // Upside down behind the model, the same turn lands where it does from
+        // the upright front view, (0.5 + sqrt(2), 0.5, 0); unreversed it would
+        // land on the opposite side.
+        Assert.Equal(0.5 + Math.Sqrt(2), View.ShownCamera.Eye.X, 1e-9);
+        Assert.Equal(0.5, View.ShownCamera.Eye.Y, 1e-9);
+        Assert.Equal(0.0, View.ShownCamera.Eye.Z, 1e-9);
+    }
 }
