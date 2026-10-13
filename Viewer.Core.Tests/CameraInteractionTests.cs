@@ -46,4 +46,22 @@ public class CameraInteractionTests : OpenedTriangleModel
 
         Assert.Equal(new Vec3(0.5, 0.5, 0), View.ShownCamera.Target);
     }
+
+    [Fact]
+    public void Orbiting_continues_over_the_top_and_turns_the_view_upside_down()
+    {
+        // Two quarter tilts pass straight over the target, where a fixed up
+        // direction would leave the camera's sideways direction undefined.
+        Service.Orbit(0.0, Math.PI / 2);
+        Service.Orbit(0.0, Math.PI / 2);
+
+        // Behind the model at (0.5, 0.5, -sqrt(2)), looking back, upside down.
+        Assert.Equal(0.5, View.ShownCamera.Eye.X, 1e-9);
+        Assert.Equal(0.5, View.ShownCamera.Eye.Y, 1e-9);
+        Assert.Equal(-Math.Sqrt(2), View.ShownCamera.Eye.Z, 1e-9);
+
+        Assert.Equal(0.0, View.ShownCamera.Up.X, 1e-9);
+        Assert.Equal(-1.0, View.ShownCamera.Up.Y, 1e-9);
+        Assert.Equal(0.0, View.ShownCamera.Up.Z, 1e-9);
+    }
 }
