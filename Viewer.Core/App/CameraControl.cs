@@ -29,19 +29,27 @@ public static class CameraControl
     public static CameraState Zoom(CameraState camera, double factor) =>
         camera with { Eye = camera.Target + (camera.Eye - camera.Target) * factor };
 
-    // Rotates the eye around the target about the world-up (Y) axis by yaw
-    // radians (a turntable orbit). Target and up are unchanged.
-    public static CameraState Orbit(CameraState camera, double yaw)
+    // Turntable orbit around the target: yaw turns the eye about the world's
+    // vertical axis, then pitch tilts it about the camera's sideways axis
+    // (positive pitch raises the eye). The target is unchanged.
+    public static CameraState Orbit(CameraState camera, double yaw, double pitch)
     {
-        var offset = camera.Eye - camera.Target;
-        var cosYaw = Math.Cos(yaw);
-        var sinYaw = Math.Sin(yaw);
+        var worldUp = new Vec3(0.0, 1.0, 0.0);
+        var offset = RotateAbout(camera.Eye - camera.Target, worldUp, yaw);
 
-        var rotated = new Vec3(
-            offset.X * cosYaw + offset.Z * sinYaw,
-            offset.Y,
-            -offset.X * sinYaw + offset.Z * cosYaw);
+        var sideways = Vec3.Cross(offset, camera.Up).Normalized();
+        offset = RotateAbout(offset, sideways, pitch);
 
-        return camera with { Eye = camera.Target + rotated };
+        return camera with { Eye = camera.Target + offset };
+    }
+
+    // Rotates v by angle radians about the unit-length axis (Rodrigues'
+    // formula), counter-clockwise when looking down the axis towards the origin.
+    private static Vec3 RotateAbout(Vec3 v, Vec3 axis, double angle)
+    {
+        var cosAngle = Math.Cos(angle);
+        var sinAngle = Math.Sin(angle);
+        return v * cosAngle + Vec3.Cross(axis, v) * sinAngle
+            + axis * (Vec3.Dot(axis, v) * (1.0 - cosAngle));
     }
 }

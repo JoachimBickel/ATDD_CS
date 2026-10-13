@@ -31,7 +31,7 @@ public class ViewerService(IModelSource source, IView view)
 
     public void Orbit(double yaw, double pitch)
     {
-        _camera = CameraControl.Orbit(_camera, yaw);
+        _camera = CameraControl.Orbit(_camera, yaw, pitch);
         view.ShowCamera(_camera);
     }
 }
