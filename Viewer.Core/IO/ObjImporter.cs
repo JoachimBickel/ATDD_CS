@@ -18,7 +18,8 @@ public class ObjImporter
         {
             switch (line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
             {
-                case ["o", var name, ..]:
+                // A file may hold several objects; the first one names the model.
+                case ["o", var name, ..] when mesh.Name.Length == 0:
                     mesh.Name = name;
                     break;
                 case ["v", var x, var y, var z]:
