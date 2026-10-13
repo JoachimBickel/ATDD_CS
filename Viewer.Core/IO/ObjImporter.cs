@@ -19,8 +19,10 @@ public class ObjImporter
             switch (line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
             {
                 // A file may hold several objects; the first one names the model.
-                case ["o", var name, ..] when mesh.Name.Length == 0:
-                    mesh.Name = name;
+                // The name is the rest of the line, so spaces survive; trimming
+                // drops the '\r' a CRLF file leaves behind.
+                case ["o", ..] when mesh.Name.Length == 0:
+                    mesh.Name = line.Trim()[1..].Trim();
                     break;
                 case ["v", var x, var y, var z]:
                     mesh.AddVertex(new Vec3(ParseDouble(x), ParseDouble(y), ParseDouble(z)));
