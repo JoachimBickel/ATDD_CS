@@ -71,7 +71,7 @@ public class ViewerViewModel : IView, INotifyPropertyChanged
 
     public void OpenModel(string path) => Service?.OpenModel(path);
 
-    public void Orbit(double yaw) => Service?.Orbit(yaw, 0.0);
+    public void Orbit(double yaw, double pitch) => Service?.Orbit(yaw, pitch);
 
     public void Zoom(double factor) => Service?.Zoom(factor);
 
