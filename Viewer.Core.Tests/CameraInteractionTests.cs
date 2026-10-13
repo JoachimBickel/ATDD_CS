@@ -22,14 +22,27 @@ public class CameraInteractionTests : OpenedTriangleModel
     [Fact]
     public void Orbiting_rotates_the_eye_around_the_target()
     {
-        const double quarterTurn = Math.PI / 2;  // 90 degrees, in radians
-        Service.Orbit(quarterTurn);
+        Service.Orbit(Math.PI / 2, 0.0);
 
         // Framed eye (0.5, 0.5, sqrt(2)) rotated 90 deg about the vertical axis
         // through the target (0.5, 0.5, 0) lands at (0.5 + sqrt(2), 0.5, 0).
         Assert.Equal(0.5 + Math.Sqrt(2), View.ShownCamera.Eye.X, 1e-9);
         Assert.Equal(0.5, View.ShownCamera.Eye.Y);
         Assert.Equal(0.0, View.ShownCamera.Eye.Z, 1e-9);
+
+        Assert.Equal(new Vec3(0.5, 0.5, 0), View.ShownCamera.Target);
+    }
+
+    [Fact]
+    public void Pitching_up_raises_the_eye_and_keeps_its_distance()
+    {
+        Service.Orbit(0.0, Math.PI / 4);
+
+        // The framed eye (0.5, 0.5, sqrt(2)) tilted 45 deg up over the target
+        // (0.5, 0.5, 0) lands at (0.5, 1.5, 1): still sqrt(2) away.
+        Assert.Equal(0.5, View.ShownCamera.Eye.X, 1e-9);
+        Assert.Equal(1.5, View.ShownCamera.Eye.Y, 1e-9);
+        Assert.Equal(1.0, View.ShownCamera.Eye.Z, 1e-9);
 
         Assert.Equal(new Vec3(0.5, 0.5, 0), View.ShownCamera.Target);
     }
