@@ -18,6 +18,9 @@ public class ObjImporter
         {
             switch (line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
             {
+                case ["o", var name, ..]:
+                    mesh.Name = name;
+                    break;
                 case ["v", var x, var y, var z]:
                     mesh.AddVertex(new Vec3(ParseDouble(x), ParseDouble(y), ParseDouble(z)));
                     break;
