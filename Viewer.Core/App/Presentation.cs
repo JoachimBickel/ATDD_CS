@@ -10,5 +10,5 @@ namespace Viewer.Core.App;
 public static class Presentation
 {
     public static ModelInfo DescribeModel(Mesh mesh) =>
-        new(mesh.Vertices.Count, mesh.Triangles.Count, MeshBounds.Of(mesh));
+        new("", mesh.Vertices.Count, mesh.Triangles.Count, MeshBounds.Of(mesh));
 }

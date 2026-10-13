@@ -65,4 +65,18 @@ public class OpenModelTests : OpenedTriangleModel
         Assert.Single(view.ShownMesh.Triangles);
         Assert.Equal(new Triangle(0, 1, 2), view.ShownMesh.Triangles[0]);
     }
+
+    [Fact]
+    public void Opening_a_model_shows_its_object_name()
+    {
+        var view = OpenModelWith("""
+            o cube
+            v 0 0 0
+            v 1 0 0
+            v 0 1 0
+            f 1 2 3
+            """);
+
+        Assert.Equal("cube", view.ShownInfo.Name);
+    }
 }
