@@ -87,4 +87,11 @@ public class OpenModelTests : OpenedTriangleModel
 
         Assert.Equal("teapot", view.ShownInfo.Name);
     }
+
+    [Fact]
+    public void Forward_and_backward_slashes_give_the_same_file_name()
+    {
+        Assert.Equal("teapot", OpenModelWith(TriangleObj, "C:/models/teapot.obj").ShownInfo.Name);
+        Assert.Equal("teapot", OpenModelWith(TriangleObj, @"C:\models\teapot.obj").ShownInfo.Name);
+    }
 }
