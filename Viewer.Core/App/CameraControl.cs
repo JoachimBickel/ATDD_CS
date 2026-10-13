@@ -34,12 +34,15 @@ public static class CameraControl
     // (positive pitch raises the eye). Up turns and tilts along with the eye, so
     // it stays at right angles to the view and the orbit can pass over the top;
     // turning about the world's vertical keeps the sideways axis level, so the
-    // view never rolls. The target is unchanged.
+    // view never rolls. While upside down the turn is reversed, so the model
+    // still follows the mouse; exactly overhead counts as upright. The target is
+    // unchanged.
     public static CameraState Orbit(CameraState camera, double yaw, double pitch)
     {
         var worldUp = new Vec3(0.0, 1.0, 0.0);
-        var offset = RotateAbout(camera.Eye - camera.Target, worldUp, yaw);
-        var up = RotateAbout(camera.Up, worldUp, yaw);
+        var turn = camera.Up.Y < 0.0 ? -yaw : yaw;
+        var offset = RotateAbout(camera.Eye - camera.Target, worldUp, turn);
+        var up = RotateAbout(camera.Up, worldUp, turn);
 
         var sideways = Vec3.Cross(offset, up).Normalized();
         offset = RotateAbout(offset, sideways, pitch);
