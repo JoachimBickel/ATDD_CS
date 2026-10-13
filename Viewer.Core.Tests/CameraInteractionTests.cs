@@ -96,4 +96,29 @@ public class CameraInteractionTests : OpenedTriangleModel
         Assert.Equal(0.5, View.ShownCamera.Eye.Y, 1e-9);
         Assert.Equal(0.0, View.ShownCamera.Eye.Z, 1e-9);
     }
+
+    [Fact]
+    public void Turning_and_tilting_combine_in_one_orbit()
+    {
+        Service.Orbit(Math.PI / 2, Math.PI / 4);
+
+        // Turned a quarter to (0.5 + sqrt(2), 0.5, 0), then tilted 45 deg up.
+        Assert.Equal(1.5, View.ShownCamera.Eye.X, 1e-9);
+        Assert.Equal(1.5, View.ShownCamera.Eye.Y, 1e-9);
+        Assert.Equal(0.0, View.ShownCamera.Eye.Z, 1e-9);
+    }
+
+    [Fact]
+    public void A_full_tilt_returns_the_camera_to_where_it_started()
+    {
+        Service.Orbit(0.0, 2 * Math.PI);
+
+        Assert.Equal(0.5, View.ShownCamera.Eye.X, 1e-9);
+        Assert.Equal(0.5, View.ShownCamera.Eye.Y, 1e-9);
+        Assert.Equal(Math.Sqrt(2), View.ShownCamera.Eye.Z, 1e-9);
+
+        Assert.Equal(0.0, View.ShownCamera.Up.X, 1e-9);
+        Assert.Equal(1.0, View.ShownCamera.Up.Y, 1e-9);
+        Assert.Equal(0.0, View.ShownCamera.Up.Z, 1e-9);
+    }
 }
