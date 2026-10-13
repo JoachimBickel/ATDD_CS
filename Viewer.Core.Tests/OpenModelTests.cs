@@ -94,4 +94,21 @@ public class OpenModelTests : OpenedTriangleModel
         Assert.Equal("teapot", OpenModelWith(TriangleObj, "C:/models/teapot.obj").ShownInfo.Name);
         Assert.Equal("teapot", OpenModelWith(TriangleObj, @"C:\models\teapot.obj").ShownInfo.Name);
     }
+
+    [Fact]
+    public void The_first_of_several_object_names_is_used()
+    {
+        var view = OpenModelWith("""
+            o body
+            v 0 0 0
+            v 1 0 0
+            v 0 1 0
+            f 1 2 3
+            o lid
+            v 0 0 1
+            f 1 2 4
+            """);
+
+        Assert.Equal("body", view.ShownInfo.Name);
+    }
 }
