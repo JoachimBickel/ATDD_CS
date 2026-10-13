@@ -11,8 +11,17 @@ public static class Presentation
 {
     public static ModelInfo DescribeModel(Mesh mesh, string path) =>
         new(
-            mesh.Name.Length > 0 ? mesh.Name : Path.GetFileNameWithoutExtension(path),
+            mesh.Name.Length > 0 ? mesh.Name : FileStem(path),
             mesh.Vertices.Count,
             mesh.Triangles.Count,
             MeshBounds.Of(mesh));
+
+    // The file name without directory or extension. Both '/' and '\' count as
+    // separators on every OS, unlike System.IO.Path off Windows.
+    private static string FileStem(string path)
+    {
+        var fileName = path[(path.LastIndexOfAny(['/', '\\']) + 1)..];
+        var dot = fileName.LastIndexOf('.');
+        return dot < 0 ? fileName : fileName[..dot];
+    }
 }
