@@ -111,4 +111,26 @@ public class OpenModelTests : OpenedTriangleModel
 
         Assert.Equal("body", view.ShownInfo.Name);
     }
+
+    [Fact]
+    public void An_object_name_may_contain_spaces()
+    {
+        var view = OpenModelWith("""
+            o Coffee Pot
+            v 0 0 0
+            v 1 0 0
+            v 0 1 0
+            f 1 2 3
+            """);
+
+        Assert.Equal("Coffee Pot", view.ShownInfo.Name);
+    }
+
+    [Fact]
+    public void An_object_name_from_a_crlf_file_has_no_trailing_carriage_return()
+    {
+        var view = OpenModelWith("o Coffee Pot\r\nv 0 0 0\r\nv 1 0 0\r\nv 0 1 0\r\nf 1 2 3\r\n");
+
+        Assert.Equal("Coffee Pot", view.ShownInfo.Name);
+    }
 }
