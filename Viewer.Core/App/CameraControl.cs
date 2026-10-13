@@ -31,22 +31,21 @@ public static class CameraControl
 
     // Turntable orbit around the target: yaw turns the eye about the world's
     // vertical axis, then pitch tilts it about the camera's sideways axis
-    // (positive pitch raises the eye). Up tilts along with the eye, so it stays
-    // at right angles to the view and the orbit can pass over the top. The
-    // target is unchanged.
+    // (positive pitch raises the eye). Up turns and tilts along with the eye, so
+    // it stays at right angles to the view and the orbit can pass over the top;
+    // turning about the world's vertical keeps the sideways axis level, so the
+    // view never rolls. The target is unchanged.
     public static CameraState Orbit(CameraState camera, double yaw, double pitch)
     {
         var worldUp = new Vec3(0.0, 1.0, 0.0);
         var offset = RotateAbout(camera.Eye - camera.Target, worldUp, yaw);
+        var up = RotateAbout(camera.Up, worldUp, yaw);
 
-        var sideways = Vec3.Cross(offset, camera.Up).Normalized();
+        var sideways = Vec3.Cross(offset, up).Normalized();
         offset = RotateAbout(offset, sideways, pitch);
+        up = RotateAbout(up, sideways, pitch);
 
-        return camera with
-        {
-            Eye = camera.Target + offset,
-            Up = RotateAbout(camera.Up, sideways, pitch),
-        };
+        return camera with { Eye = camera.Target + offset, Up = up };
     }
 
     // Rotates v by angle radians about the unit-length axis (Rodrigues'
