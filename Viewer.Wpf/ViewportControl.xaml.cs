@@ -37,6 +37,7 @@ public partial class ViewportControl : UserControl
 
         var position = e.GetPosition(this);
         var deltaX = position.X - _lastMousePosition.X;
+        var deltaY = position.Y - _lastMousePosition.Y;
         _lastMousePosition = position;
 
         // Only orbit drags that started on this control (capture is taken in
@@ -46,10 +47,11 @@ public partial class ViewportControl : UserControl
         if (IsMouseCaptured && e.LeftButton == MouseButtonState.Pressed)
         {
             // Translation only: pixels -> radians; the camera logic lives in
-            // the core. Negative: dragging right turns the model's right side
-            // away from you.
-            const double radiansPerPixel = -0.005;
-            ViewModel.Orbit(deltaX * radiansPerPixel);
+            // the core. The model follows the mouse: dragging right turns its
+            // right side away from you (negative yaw), dragging down tips its
+            // top towards you (positive pitch, as screen Y grows downward).
+            const double radiansPerPixel = 0.005;
+            ViewModel.Orbit(-deltaX * radiansPerPixel, deltaY * radiansPerPixel);
         }
     }
 

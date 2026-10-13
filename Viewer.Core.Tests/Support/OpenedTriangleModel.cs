@@ -26,11 +26,11 @@ public abstract class OpenedTriangleModel
 
     // Arrange + act: open a model from the given OBJ text, returning what the
     // view was shown. For one-off content tests that only inspect the view.
-    protected static FakeView OpenModelWith(string objText)
+    protected static FakeView OpenModelWith(string objText, string path = "model.obj")
     {
         var view = new FakeView();
         var service = new ViewerService(new FakeModelSource(objText), view);
-        service.OpenModel("model.obj");
+        service.OpenModel(path);
         return view;
     }
 }

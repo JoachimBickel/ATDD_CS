@@ -19,7 +19,7 @@ public class ViewerService(IModelSource source, IView view)
         _camera = CameraControl.FrameModel(model);
 
         view.ShowModel(model);
-        view.ShowModelInfo(Presentation.DescribeModel(model));
+        view.ShowModelInfo(Presentation.DescribeModel(model, path));
         view.ShowCamera(_camera);
     }
 
@@ -29,9 +29,9 @@ public class ViewerService(IModelSource source, IView view)
         view.ShowCamera(_camera);
     }
 
-    public void Orbit(double yaw)
+    public void Orbit(double yaw, double pitch)
     {
-        _camera = CameraControl.Orbit(_camera, yaw);
+        _camera = CameraControl.Orbit(_camera, yaw, pitch);
         view.ShowCamera(_camera);
     }
 }

@@ -65,4 +65,72 @@ public class OpenModelTests : OpenedTriangleModel
         Assert.Single(view.ShownMesh.Triangles);
         Assert.Equal(new Triangle(0, 1, 2), view.ShownMesh.Triangles[0]);
     }
+
+    [Fact]
+    public void Opening_a_model_shows_its_object_name()
+    {
+        var view = OpenModelWith("""
+            o cube
+            v 0 0 0
+            v 1 0 0
+            v 0 1 0
+            f 1 2 3
+            """);
+
+        Assert.Equal("cube", view.ShownInfo.Name);
+    }
+
+    [Fact]
+    public void A_model_without_an_object_name_is_named_after_its_file()
+    {
+        var view = OpenModelWith(TriangleObj, "models/teapot.obj");
+
+        Assert.Equal("teapot", view.ShownInfo.Name);
+    }
+
+    [Fact]
+    public void Forward_and_backward_slashes_give_the_same_file_name()
+    {
+        Assert.Equal("teapot", OpenModelWith(TriangleObj, "C:/models/teapot.obj").ShownInfo.Name);
+        Assert.Equal("teapot", OpenModelWith(TriangleObj, @"C:\models\teapot.obj").ShownInfo.Name);
+    }
+
+    [Fact]
+    public void The_first_of_several_object_names_is_used()
+    {
+        var view = OpenModelWith("""
+            o body
+            v 0 0 0
+            v 1 0 0
+            v 0 1 0
+            f 1 2 3
+            o lid
+            v 0 0 1
+            f 1 2 4
+            """);
+
+        Assert.Equal("body", view.ShownInfo.Name);
+    }
+
+    [Fact]
+    public void An_object_name_may_contain_spaces()
+    {
+        var view = OpenModelWith("""
+            o Coffee Pot
+            v 0 0 0
+            v 1 0 0
+            v 0 1 0
+            f 1 2 3
+            """);
+
+        Assert.Equal("Coffee Pot", view.ShownInfo.Name);
+    }
+
+    [Fact]
+    public void An_object_name_from_a_crlf_file_has_no_trailing_carriage_return()
+    {
+        var view = OpenModelWith("o Coffee Pot\r\nv 0 0 0\r\nv 1 0 0\r\nv 0 1 0\r\nf 1 2 3\r\n");
+
+        Assert.Equal("Coffee Pot", view.ShownInfo.Name);
+    }
 }
