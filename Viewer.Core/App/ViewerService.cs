@@ -19,7 +19,7 @@ public class ViewerService(IModelSource source, IView view)
         _camera = CameraControl.FrameModel(model);
 
         view.ShowModel(model);
-        view.ShowModelInfo(Presentation.DescribeModel(model));
+        view.ShowModelInfo(Presentation.DescribeModel(model, path));
         view.ShowCamera(_camera);
     }
 
