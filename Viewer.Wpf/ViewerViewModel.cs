@@ -20,6 +20,13 @@ public class ViewerViewModel : IView, INotifyPropertyChanged
     // Inbound: the core service, wired in App; the views drive it through us.
     public ViewerService? Service { get; set; }
 
+    private string _title = "3D Viewer";
+    public string Title
+    {
+        get => _title;
+        private set => SetField(ref _title, value);
+    }
+
     private int _vertexCount;
     public int VertexCount
     {
@@ -72,6 +79,7 @@ public class ViewerViewModel : IView, INotifyPropertyChanged
 
     public void ShowModelInfo(ModelInfo info)
     {
+        Title = $"{info.Name} — 3D Viewer";
         VertexCount = info.VertexCount;
         TriangleCount = info.TriangleCount;
 
