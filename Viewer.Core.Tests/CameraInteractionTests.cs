@@ -64,4 +64,22 @@ public class CameraInteractionTests : OpenedTriangleModel
         Assert.Equal(-1.0, View.ShownCamera.Up.Y, 1e-9);
         Assert.Equal(0.0, View.ShownCamera.Up.Z, 1e-9);
     }
+
+    [Fact]
+    public void Turning_after_tilting_keeps_the_height_and_never_rolls()
+    {
+        Service.Orbit(0.0, Math.PI / 4);
+        Service.Orbit(Math.PI / 3, 0.0);
+
+        var offset = View.ShownCamera.Eye - View.ShownCamera.Target;
+        var sideways = Vec3.Cross(offset, View.ShownCamera.Up);
+
+        // Left/right turns about the world's vertical: the eye keeps its height,
+        // and the camera's sideways direction stays level, so nothing rolls.
+        Assert.Equal(1.5, View.ShownCamera.Eye.Y, 1e-9);
+        Assert.Equal(0.0, sideways.Y, 1e-9);
+
+        // Up stays at right angles to the viewing direction.
+        Assert.Equal(0.0, Vec3.Dot(View.ShownCamera.Up, offset), 1e-9);
+    }
 }
